@@ -1,38 +1,30 @@
 from rest_framework import viewsets, mixins
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
-# from rest_framework.authtoken.views import ObtainAuthToken
-# from rest_framework.response import Response
-# from rest_framework import status
-
-from .permissions import IsAuthorOrReadOnly
-from .serializers import (
-    PostSerializer,
-    GroupSerializer,
-    CommentSerializer
-)
+from rest_framework.permissions import IsAuthenticated
+from .permissions import IsAuthorOrReadOnly, IsAuthenticatedForSafeMethods  # Добавьте новый permission
+from .serializers import PostSerializer, GroupSerializer, CommentSerializer
 from posts.models import Post, Group, Comment
 
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
+    permission_classes = [IsAuthenticatedForSafeMethods, IsAuthorOrReadOnly]  # Изменили
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
 
 class GroupViewSet(mixins.ListModelMixin,
-                   mixins.RetrieveModelMixin,
-                   viewsets.GenericViewSet):
+                  mixins.RetrieveModelMixin,
+                  viewsets.GenericViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedForSafeMethods]  # Изменили
 
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
+    permission_classes = [IsAuthenticatedForSafeMethods, IsAuthorOrReadOnly]  # Изменили
 
     def get_queryset(self):
         post_id = self.kwargs.get('post_id')
