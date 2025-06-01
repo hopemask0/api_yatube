@@ -1,3 +1,4 @@
+from asyncio import exceptions
 from rest_framework import viewsets, mixins
 # from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from .permissions import IsAuthorOrReadOnly, IsAuthenticatedForSafeMethods
@@ -12,12 +13,11 @@ from posts.models import Post, Group, Comment
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = [
-        IsAuthenticatedForSafeMethods,
-        IsAuthorOrReadOnly
-    ]
+    permission_classes = [IsAuthenticatedForSafeMethods, IsAuthorOrReadOnly]
 
     def perform_create(self, serializer):
+        if self.request.user.is_anonymous:
+            raise exceptions.NotAuthenticated()
         serializer.save(author=self.request.user)
 
 
