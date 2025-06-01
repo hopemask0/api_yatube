@@ -30,3 +30,4 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ('id', 'author', 'post', 'text', 'created')
         read_only_fields = ('post',)
 
+
