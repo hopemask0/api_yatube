@@ -1,5 +1,5 @@
-from asyncio import exceptions
 from rest_framework import permissions
+from rest_framework.exceptions import NotAuthenticated
 
 
 class IsAuthorOrReadOnly(permissions.BasePermission):
@@ -11,7 +11,6 @@ class IsAuthorOrReadOnly(permissions.BasePermission):
 class IsAuthenticatedForSafeMethods(permissions.BasePermission):
     def has_permission(self, request, view):
         if request.method in permissions.SAFE_METHODS:
-            if request.user.is_anonymous:
-                raise exceptions.NotAuthenticated()
-            return True
+            if not request.user.is_authenticated:
+                raise NotAuthenticated()
         return True
