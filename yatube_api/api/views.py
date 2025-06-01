@@ -6,8 +6,8 @@ from rest_framework import status
 
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (
-    PostSerializer, 
-    GroupSerializer, 
+    PostSerializer,
+    GroupSerializer,
     CommentSerializer
 )
 from posts.models import Post, Group, Comment
